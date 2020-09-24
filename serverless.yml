@@ -9,7 +9,27 @@ plugins:
     - ./vendor/bref/bref
 
 functions:
-    hello:
+    api-test-1:
+        handler: api-1.php
+        description: ''
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+            - ${bref:layer.php-74-fpm}
+        events:
+            -   http: 'ANY /1/'
+            -   http: 'ANY /1/{proxy+}'
+
+    api-test-2:
+        handler: api-2.php
+        description: ''
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+            - ${bref:layer.php-74-fpm}
+        events:
+            - http: 'ANY /2/'
+            - http: 'ANY /2/{proxy+}'
+
+    function-test:
         handler: index.php
         description: ''
         layers:
@@ -18,4 +38,6 @@ functions:
 # Exclude files from deployment
 package:
     exclude:
+        - 'node_modules/**'
         - 'tests/**'
+        - 'journal.md'
