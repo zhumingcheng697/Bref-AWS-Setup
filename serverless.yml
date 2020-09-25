@@ -35,6 +35,16 @@ functions:
             - http: 'ANY /2/'
             - http: 'ANY /2/{proxy+}'
 
+    mail-api:
+        handler: mail-api.php
+        description: ''
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+            - ${bref:layer.php-74-fpm}
+        events:
+            - http: 'ANY /email/'
+            - http: 'ANY /email/{proxy+}'
+
     api-invoking-api-test:
         handler: api-invoking-api.php
         description: ''
