@@ -1,5 +1,6 @@
 {
     "require": {
-        "bref/bref": "^0.5.30"
+        "bref/bref": "^0.5.30",
+        "aws/aws-sdk-php": "^3.155"
     }
 }

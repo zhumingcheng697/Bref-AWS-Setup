@@ -4,6 +4,12 @@ provider:
     name: aws
     region: us-east-1
     runtime: provided
+    iamRoleStatements:
+        - Effect: Allow
+          Action:
+              - lambda:InvokeFunction
+          Resource:
+              - arn:aws:lambda:us-east-1:*:*
 
 plugins:
     - ./vendor/bref/bref
@@ -28,6 +34,22 @@ functions:
         events:
             - http: 'ANY /2/'
             - http: 'ANY /2/{proxy+}'
+
+    func-invoking-api-test:
+        handler: func-invoking-api.php
+        description: ''
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+            - ${bref:layer.php-74-fpm}
+        events:
+            - http: 'ANY /func-invoking-api/'
+            - http: 'ANY /func-invoking-api/{proxy+}'
+
+    func-invoking-func-test:
+        handler: func-invoking-func.php
+        description: ''
+        layers:
+            - ${bref:layer.php-74}
 
     function-test:
         handler: index.php
