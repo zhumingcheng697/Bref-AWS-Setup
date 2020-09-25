@@ -45,6 +45,12 @@ functions:
             - http: 'ANY /api-invoking-api/'
             - http: 'ANY /api-invoking-api/{proxy+}'
 
+    api-invoking-func-test:
+        handler: api-invoking-func.php
+        description: ''
+        layers:
+            - ${bref:layer.php-74}
+
     func-invoking-api-test:
         handler: func-invoking-api.php
         description: ''

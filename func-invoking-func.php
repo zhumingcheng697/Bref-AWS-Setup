@@ -17,8 +17,8 @@ return function ($event) {
 
     $response = new \stdClass;
     $response->time = date(DATE_ISO8601);
-    $response->query = $event;
-    $response->api_response = json_decode(json_decode($result->get('Payload')->getContents(), true));
+    $response->event = $event;
+    $response->func_response = json_decode(json_decode($result->get('Payload')->getContents(), true));
 
     $json_response = json_encode($response);
     return $json_response;

@@ -20,7 +20,7 @@ $result = $lambda->invoke([
 $response = new \stdClass;
 $response->time = date(DATE_ISO8601);
 $response->query = $params;
-$response->api_response = json_decode(json_decode($result->get('Payload')->getContents(), true));
+$response->func_response = json_decode(json_decode($result->get('Payload')->getContents(), true));
 
 $json_response = json_encode($response);
 echo $json_response;
