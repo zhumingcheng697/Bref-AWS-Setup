@@ -29,3 +29,9 @@
 - Tested with [HTTP APIs that invoke other HTTP APIs](api-invoking-api.php)
 
 - Tested with [PHP lambda functions that invoke other PHP lambda functions](func-invoking-func.php)
+
+### Friday: September 25, 2020 (1 hour)
+
+- Tested with [PHP lambda functions that invoke HTTP APIs](api-invoking-func.php)
+
+- Tested with using the PHP `mail()` function in [HTTP APIs](mail-api.php) (does not seem to be working for now)
