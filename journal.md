@@ -18,4 +18,14 @@
 
 - Getting started with PHP syntax
 
-- Tested with building lambda functions and HTTP API using PHP runtime
+- Tested with building [lambda functions](index.php) and HTTP APIs using PHP runtime
+
+### Thursday: September 24, 2020 (4 hours)
+
+- Added `iamRoleStatements` in `serverless.yml` and installed [AWS PHP SDK](https://aws.amazon.com/sdk-for-php/) to run PHP lambda functions through serverless using the IAM user
+
+- Tested with [HTTP APIs that invoke PHP lambda functions](func-invoking-api.php)
+
+- Tested with [HTTP APIs that invoke other HTTP APIs](api-invoking-api.php)
+
+- Tested with [PHP lambda functions that invoke other PHP lambda functions](func-invoking-func.php)
