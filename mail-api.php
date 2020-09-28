@@ -1,24 +1,67 @@
 <?php
-$params = array();
-parse_str($_SERVER['QUERY_STRING'], $params);
 
-$mailto = $params[0] ?? $params["email"] ?? $params["to"] ?? $params["mailto"] ?? "nyu-dining-test@outlook.com";
-$subject = $params["subject"] ?? "PHP Email Lambda Test (" . date(DATE_RFC2822) . ")";
-$body = $params["body"] ?? $params["msg"] ?? $params["message"] ?? "This is an automatic email sent using PHP Lambda.";
+require __DIR__ . '/vendor/autoload.php';
 
-echo "email: " . $mailto . "\nsubject: " . $subject . "\nbody: " . $body . "\n";
+function send_email($mailto, $subject, $body) {
+    $transport = (new Swift_SmtpTransport("smtp-mail.outlook.com", 587, "tls"))
+        ->setUsername("nyu-dining-test@outlook.com")
+        ->setPassword("Dining*2020")
+    ;
 
-try {
-    $result = mail($mailto, $subject, $body);
+    $mailer = new Swift_Mailer($transport);
 
-    echo $result . "\n";
+    $message = (new Swift_Message($subject))
+        ->setFrom(["nyu-dining-test@outlook.com" => "PHP Email Lambda Test"])
+        ->setTo([$mailto])
+        ->setBody($body)
+    ;
 
-    if ($result) {
-        echo "Email sent successfully to \"" . $mailto . "\"";
-    } else {
-        echo "Email failed to send";
-    }
-} catch (Exception $e) {
-    echo 'Caught exception: ',  $e->getMessage(), "\n";
+    return $mailer->send($message);
 }
+
+function send_default_email($subject, $body) {
+    echo "Trying to send email to \"nyu-dining-test@outlook.com\"\n";
+
+    try {
+        $result = send_email("nyu-dining-test@outlook.com", $subject, $body);
+
+        if ($result) {
+            echo "Email sent successfully to \"nyu-dining-test@outlook.com\"\n";
+        } else {
+            echo "Email failed to send: " . $result . "\n";
+        }
+    } catch (Exception $e) {
+        echo "Caught exception: " .  $e->getMessage() . "\n";
+    }
+}
+
+(function() {
+    $params = array();
+    parse_str($_SERVER['QUERY_STRING'], $params);
+
+    $mailto = $params["to"] ?? $params["mailto"] ?? "nyu-dining-test@outlook.com";
+    $subject = $params["subject"] ?? "PHP Email Lambda Test (" . date(DATE_RFC2822) . ")";
+    $body = $params["body"] ?? $params["msg"] ?? $params["message"] ?? "This is an automatic email sent using PHP Lambda.";
+
+    if ($params["dev"] ?? false) {
+        echo "email: " . $mailto . "\nsubject: " . $subject . "\nbody: " . $body . "\n";
+    }
+
+    try {
+        $result = send_email($mailto, $subject, $body);
+
+        if ($result) {
+            echo "Email sent successfully to \"" . $mailto . "\"\n";
+        } else {
+            echo "Email failed to send: " . $result . "\n";
+
+            send_default_email($subject, $body);
+        }
+    } catch (Exception $e) {
+        echo "Caught exception: " .  $e->getMessage() . "\n";
+
+        send_default_email($subject, $body);
+    }
+})();
+
 ?>
