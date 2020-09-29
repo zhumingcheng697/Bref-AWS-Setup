@@ -35,3 +35,15 @@
 - Tested with [PHP lambda functions that invoke HTTP APIs](api-invoking-func.php)
 
 - Tested with using the PHP `mail()` function in [HTTP APIs](mail-api.php) (does not seem to be working for now)
+
+## Week 5
+
+### Monday: September 28, 2020 (3 hours)
+
+- Installed [Swift Mailer](https://swiftmailer.symfony.com/docs/introduction.html) PHP dependency
+
+- Tested with the `global` keyword and variable scopes in PHP
+
+- Tested with [PHP lambda functions that send emails using Swift Mailer](mail-api.php)
+
+- Tested with [HTTP APIs that send emails using Swift Mailer](mail-func.php)
