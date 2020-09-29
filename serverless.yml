@@ -83,6 +83,12 @@ functions:
         layers:
             - ${bref:layer.php-74}
 
+    mail-func:
+        handler: mail-func.php
+        description: ''
+        layers:
+            - ${bref:layer.php-74}
+
 # Exclude files from deployment
 package:
     exclude:

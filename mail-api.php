@@ -25,13 +25,9 @@ function send_default_email($subject, $body) {
     try {
         $result = send_email("nyu-dining-test@outlook.com", $subject, $body);
 
-        if ($result) {
-            echo "Email sent successfully to \"nyu-dining-test@outlook.com\"\n";
-        } else {
-            echo "Email failed to send: " . $result . "\n";
-        }
+        echo $result ? "Email sent successfully to \"nyu-dining-test@outlook.com\"\n" : "Email failed to send: " . $result . "\n";
     } catch (Exception $e) {
-        echo "Caught exception: " .  $e->getMessage() . "\n";
+        echo "Email failed to send: " .  $e->getMessage() . "\n";
     }
 }
 
@@ -58,7 +54,7 @@ function send_default_email($subject, $body) {
             send_default_email($subject, $body);
         }
     } catch (Exception $e) {
-        echo "Caught exception: " .  $e->getMessage() . "\n";
+        echo "Email failed to send: " .  $e->getMessage() . "\n";
 
         send_default_email($subject, $body);
     }
