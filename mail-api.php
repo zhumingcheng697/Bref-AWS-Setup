@@ -32,14 +32,14 @@ function send_default_email($subject, $body) {
 }
 
 (function() {
-    $params = array();
-    parse_str($_SERVER['QUERY_STRING'], $params);
+    $props = array();
+    parse_str($_SERVER['QUERY_STRING'], $props);
 
-    $mailto = $params["to"] ?? $params["mailto"] ?? "nyu-dining-test@outlook.com";
-    $subject = $params["subject"] ?? "PHP Email Lambda Test (" . date(DATE_RFC2822) . ")";
-    $body = $params["body"] ?? $params["msg"] ?? $params["message"] ?? "This is an automatic email sent using PHP Lambda.";
+    $mailto = $props["to"] ?? $props["mailto"] ?? "nyu-dining-test@outlook.com";
+    $subject = $props["subject"] ?? "PHP Email Lambda Test (" . date(DATE_RFC2822) . ")";
+    $body = $props["body"] ?? $props["msg"] ?? $props["message"] ?? "This is an automatic email sent using PHP Lambda.";
 
-    if ($params["dev"] ?? false) {
+    if ($props["dev"] ?? false) {
         echo "email: " . $mailto . "\nsubject: " . $subject . "\nbody: " . $body . "\n";
     }
 

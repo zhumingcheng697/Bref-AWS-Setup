@@ -2,8 +2,8 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-$params = array();
-parse_str($_SERVER['QUERY_STRING'], $params);
+$props = array();
+parse_str($_SERVER['QUERY_STRING'], $props);
 
 $lambda = new \Aws\Lambda\LambdaClient([
     'version' => 'latest',
@@ -14,12 +14,12 @@ $result = $lambda->invoke([
     'FunctionName' => 'app-dev-function-test',
     'InvocationType' => 'RequestResponse',
     'LogType' => 'None',
-    'Payload' => json_encode($params),
+    'Payload' => json_encode($props),
 ]);
 
 $response = new \stdClass;
 $response->time = date(DATE_ISO8601);
-$response->query = $params;
+$response->query = $props;
 $response->func_response = json_decode(json_decode($result->get('Payload')->getContents(), true));
 
 $json_response = json_encode($response);
