@@ -95,3 +95,4 @@ package:
         - 'node_modules/**'
         - 'tests/**'
         - 'journal.md'
+        - 'README.md'
