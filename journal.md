@@ -8,7 +8,7 @@
 
 - Created an AWS account and an IAM user
 
-- Installed [serverless](https://www.serverless.com/) global command and setting it up with AWS
+- Installed [`serverless`](https://www.serverless.com/) global command and setting it up with AWS
 
 ### Wednesday: September 23, 2020 (5 hours)
 
@@ -47,3 +47,7 @@
 - Tested with [PHP lambda functions that send emails using Swift Mailer](mail-api.php)
 
 - Tested with [HTTP APIs that send emails using Swift Mailer](mail-func.php)
+
+### Tuesday: September 29, 2020 (1 hour)
+
+- Added `README.md` for `serverless` and Bref set-up process and `serverless` commands
