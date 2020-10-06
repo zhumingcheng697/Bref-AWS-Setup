@@ -51,3 +51,11 @@
 ### Tuesday: September 29, 2020 (1 hour)
 
 - Added `README.md` for `serverless` and Bref set-up process and `serverless` commands
+
+## Week 6
+
+### Monday: October 5, 2020 (2 hours)
+
+- Built a Qualtrics survey that sends email using the PHP Lambda API wrote last week
+
+- Tested with complex data types available in Qualtrics surveys
