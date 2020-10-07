@@ -59,3 +59,7 @@
 - Built a Qualtrics survey that sends email using the PHP Lambda API wrote last week
 
 - Tested with complex data types available in Qualtrics surveys
+
+### Tuesday: October 6, 2020 (1 hour)
+
+- Tested with emailing complex data types from surveys
