@@ -43,6 +43,13 @@ function send_default_email($subject, $body) {
         echo "email: " . $mailto . "\nsubject: " . $subject . "\nbody: " . $body . "\n";
     }
 
+    if ($body == "devMode") {
+        $body .= "\n\nComplex Data:\n\n";
+        foreach ($props as $key => $value) {
+            $body .= ($key . ":" . $value . "\n");
+        }
+    }
+
     try {
         $result = send_email($mailto, $subject, $body);
 
