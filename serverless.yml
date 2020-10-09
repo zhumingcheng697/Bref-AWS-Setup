@@ -16,7 +16,7 @@ plugins:
 
 functions:
     api-test-1:
-        handler: api-1.php
+        handler: php-api/api-1.php
         description: ''
         timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
         layers:
@@ -26,7 +26,7 @@ functions:
             -   http: 'ANY /1/{proxy+}'
 
     api-test-2:
-        handler: api-2.php
+        handler: php-api/api-2.php
         description: ''
         timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
         layers:
@@ -36,7 +36,7 @@ functions:
             - http: 'ANY /2/{proxy+}'
 
     mail-api:
-        handler: mail-api.php
+        handler: php-api/mail-api.php
         description: ''
         timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
         layers:
@@ -46,7 +46,7 @@ functions:
             - http: 'ANY /email/{proxy+}'
 
     api-invoking-api-test:
-        handler: api-invoking-api.php
+        handler: php-api/api-invoking-api.php
         description: ''
         timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
         layers:
@@ -56,13 +56,13 @@ functions:
             - http: 'ANY /api-invoking-api/{proxy+}'
 
     api-invoking-func-test:
-        handler: api-invoking-func.php
+        handler: php-func/api-invoking-func.php
         description: ''
         layers:
             - ${bref:layer.php-74}
 
     func-invoking-api-test:
-        handler: func-invoking-api.php
+        handler: php-api/func-invoking-api.php
         description: ''
         timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
         layers:
@@ -72,19 +72,19 @@ functions:
             - http: 'ANY /func-invoking-api/{proxy+}'
 
     func-invoking-func-test:
-        handler: func-invoking-func.php
+        handler: php-func/func-invoking-func.php
         description: ''
         layers:
             - ${bref:layer.php-74}
 
     function-test:
-        handler: index.php
+        handler: php-func/index.php
         description: ''
         layers:
             - ${bref:layer.php-74}
 
     mail-func:
-        handler: mail-func.php
+        handler: php-func/mail-func.php
         description: ''
         layers:
             - ${bref:layer.php-74}
@@ -94,5 +94,5 @@ package:
     exclude:
         - 'node_modules/**'
         - 'tests/**'
-        - 'journal.md'
-        - 'README.md'
+        - '*.md'
+        - '/*.js'
