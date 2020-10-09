@@ -95,4 +95,6 @@ package:
         - 'node_modules/**'
         - 'tests/**'
         - '*.md'
-        - '/*.js'
+        - '*.js'
+        - '**/.DS_Store'
+        - '.idea'
