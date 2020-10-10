@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '../../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 function send_email($mailto, $subject, $body) {
     $transport = (new Swift_SmtpTransport("smtp-mail.outlook.com", 587, "tls"))

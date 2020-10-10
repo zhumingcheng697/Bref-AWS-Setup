@@ -181,7 +181,7 @@ function setFunctions(yml) {
                 console.error(`${logStyle.fg.red}"${filePath}" load failed:\n${err}${logStyle.reset}`);
                 converted += 1;
             } else {
-                file = file.replace(/('[^']*vendor\/autoload.php')|("[^"]*vendor\/autoload.php")/g, `'../../vendor/autoload.php'`);
+                file = file.replace(/('[^']*vendor\/autoload.php')|("[^"]*vendor\/autoload.php")/g, `'/../vendor/autoload.php'`);
                 fs.writeFile(filePath, file, (e) => {
                     if (e) {
                         console.error(`${logStyle.fg.red}"${filePath}" save failed:\n${e}${logStyle.reset}`);
