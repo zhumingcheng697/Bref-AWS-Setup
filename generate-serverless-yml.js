@@ -105,25 +105,31 @@ function findFiles(path, extension = "") {
  * @param handler {function} Runs after load and parse
  * @return {void}
  */
-function readServerlessYml(handler = () => {}) {
-    try {
-        const file = fs.readFileSync("serverless.yml", "utf8");
-
-        try {
-            const parsed = YAML.parse(file);
-            parsed["functions"] = {};
-            console.log(`${logStyle.fg.green}"serverless.yml" load succeeded${logStyle.reset}`);
-            handler(Object.assign({}, defaultServerlessYml, parsed));
-        } catch (e) {
-            console.warn(`${logStyle.fg.yellow}"serverless.yml" parse failed. Using default values instead.${logStyle.reset}`);
+function getServerlessYml(handler = () => {}) {
+    fs.readFile("serverless.yml", "utf8", (err, file) => {
+        if (err) {
+            console.warn(`${logStyle.fg.yellow}"serverless.yml" load failed. Using default values instead.${logStyle.reset}`);
             handler(Object.assign({}, defaultServerlessYml));
+        } else {
+            try {
+                const parsed = YAML.parse(file);
+                parsed["functions"] = {};
+                console.log(`${logStyle.fg.green}"serverless.yml" load succeeded${logStyle.reset}`);
+                handler(Object.assign({}, defaultServerlessYml, parsed));
+            } catch (e) {
+                console.warn(`${logStyle.fg.yellow}"serverless.yml" parse failed. Using default values instead.${logStyle.reset}`);
+                handler(Object.assign({}, defaultServerlessYml));
+            }
         }
-    } catch (e) {
-        console.warn(`${logStyle.fg.yellow}"serverless.yml" load failed. Using default values instead.${logStyle.reset}`);
-        handler(Object.assign({}, defaultServerlessYml));
-    }
+    });
 }
 
+/**
+ * Sets "serverless.yml" with the correct function data
+ *
+ * @param yml {Object} Parsed "serverless.yml" object
+ * @return {void}
+ */
 function setFunctions(yml) {
     for (const api of findFiles("php-api", "php")) {
         const encodedName = api[0].replace(/\s/g, "-");
@@ -150,13 +156,11 @@ function setFunctions(yml) {
         };
     }
 
-    console.log(yml);
+    console.log(`${logStyle.fg.green}"functions" field updated${logStyle.reset}`);
 }
 
-readServerlessYml((yml) => {
-    console.log(yml);
+getServerlessYml((yml) => {
+    console.log(yml.functions);
     setFunctions(yml);
+    console.log(yml.functions);
 });
-
-// console.table(apiFiles);
-// console.table(funcFiles);
