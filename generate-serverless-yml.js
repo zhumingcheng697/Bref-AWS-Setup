@@ -39,6 +39,35 @@ const logStyle = {
     }
 };
 
+const defaultServerlessYml = {
+    // service: "app",
+    provider: {
+        name: "aws",
+        // region: "us-east-1",
+        runtime: "provided",
+        iamRoleStatements: [
+            {
+                Effect: "Allow",
+                Action: ["lambda:InvokeFunction"],
+                Resource: ["arn:aws:lambda:us-east-1:*:*"]
+            }
+        ]
+    },
+    plugins: ["./vendor/bref/bref"],
+    functions: {},
+    package: {
+        exclude: [
+            ".idea/**",
+            "node_modules/**",
+            "tests/**",
+            "*.md",
+            "*.js",
+            "**/.DS_Store"
+        ]
+    }
+};
+
+
 const apiFiles = findFiles("php-api", "php");
 const funcFiles = findFiles("php-func", "php");
 
@@ -80,14 +109,16 @@ function readServerlessYml(handler = () => {}) {
         const file = fs.readFileSync("serverless.yml", "utf8");
 
         try {
-            handler(Object.assign({}, YAML.parse(file)));
+            const parsed = YAML.parse(file);
+            console.log(`${logStyle.fg.green}"serverless.yml" load succeeded${logStyle.reset}`);
+            handler(Object.assign({}, defaultServerlessYml, parsed));
         } catch (e) {
-            console.warn(`${logStyle.fg.yellow}Unable to parse "serverless.yml"${logStyle.reset}`);
-            handler(Object.assign({}, {}));
+            console.warn(`${logStyle.fg.yellow}"serverless.yml" parse failed. Using default values instead.${logStyle.reset}`);
+            handler(Object.assign({}, defaultServerlessYml));
         }
     } catch (e) {
-        console.warn(`${logStyle.fg.yellow}Unable to read "serverless.yml"${logStyle.reset}`);
-        handler(Object.assign({}, {}));
+        console.warn(`${logStyle.fg.yellow}"serverless.yml" load failed. Using default values instead.${logStyle.reset}`);
+        handler(Object.assign({}, defaultServerlessYml));
     }
 }
 
