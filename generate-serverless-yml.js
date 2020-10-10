@@ -159,8 +159,31 @@ function setFunctions(yml) {
     console.log(`${logStyle.fg.green}"functions" field updated${logStyle.reset}`);
 }
 
+/**
+ * Writes data to "serverless.yml"
+ *
+ * @param yml {Object} Parsed "serverless.yml" object
+ * @param handler {function} Runs after load and parse
+ * @return {void}
+ */
+function saveServerlessYml(yml, handler = () => {}) {
+    try {
+        const stringified = YAML.stringify(yml, {indent: 4, simpleKeys: true});
+
+        fs.writeFile("serverless.yml", stringified, (err) => {
+            if (err) {
+                console.error(`${logStyle.fg.red}"serverless.yml" write failed:\n${err}${logStyle.reset}`);
+            } else {
+                console.log(`${logStyle.fg.green}"serverless.yml" save succeeded${logStyle.reset}`);
+                handler();
+            }
+        });
+    } catch (e) {
+        console.error(`${logStyle.fg.red}"serverless.yml" stringify failed:\n${e}${logStyle.reset}`);
+    }
+}
+
 getServerlessYml((yml) => {
-    console.log(yml.functions);
     setFunctions(yml);
-    console.log(yml.functions);
+    saveServerlessYml(yml);
 });
