@@ -1,16 +1,25 @@
 ## How to Set Up
 
-1. Install [`serverless`](https://serverless.com/) globally.
+1. Clone this repo.
+   ```
+   $ git clone https://github.com/zhumingcheng697/Bref-AWS-Setup.git
+    ```
+   
+2. Install [`serverless`](https://serverless.com/) globally.
     ```
     $ npm install -g serverless
     ```
-   
-2. Configure `serverless` using [AWS access keys](https://bref.sh/docs/installation/aws-keys.html).
+3. Install other necessary node modules.
+    ```
+    $ npm install
+    ```
+
+4. Configure `serverless` using [AWS access keys](https://bref.sh/docs/installation/aws-keys.html).
     ```
     $ serverless config credentials --provider aws --key <key> --secret <secret>
     ```
 
-3. Install [Composer](https://getcomposer.org/) globally.
+5. Install [Composer](https://getcomposer.org/) globally.
 
     - On a Linux / Unix / macOS machine, [install Composer locally](https://getcomposer.org/download/) and then move the downloaded `composer.phar` to `/usr/local/bin/composer`.
         ```
@@ -19,12 +28,12 @@
    
    - On a Windows machine, download and run [Composer-Setup.exe](https://getcomposer.org/Composer-Setup.exe) as detailed on the [Composer website](https://getcomposer.org/doc/00-intro.md#using-the-installer).
 
-4. Install [Bref](https://bref.sh/docs/) through Composer.
+6. Install [Bref](https://bref.sh/docs/) through Composer.
     ```
     $ composer require bref/bref
     ```
 
-5. You are all set!
+7. You are all set!
     - To start fresh, initiate a new Bref project.
         ```
         $ vendor/bin/bref init
