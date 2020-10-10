@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '../../vendor/autoload.php';
 
 return function ($event) {
     $lambda = new \Aws\Lambda\LambdaClient([

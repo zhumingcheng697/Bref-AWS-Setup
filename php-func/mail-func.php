@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '../../vendor/autoload.php';
 
 return function ($event) {
     global $return_msg;

@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '../../vendor/autoload.php';
 
 $props = array();
 parse_str($_SERVER['QUERY_STRING'], $props);
