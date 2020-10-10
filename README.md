@@ -30,7 +30,7 @@
         $ vendor/bin/bref init
         ```
    
-    - To quickly deploy the PHP scripts you already have, move them to [`/php-api`](/php-api) and [`/php-func`](/php-func), run the script `update-serverless-yml.js`, and run `serverless deploy`.
+    - To quickly deploy the PHP scripts you already have, move them to [`php-api/`](php-api) and [`php-func/`](php-func), run the script `update-serverless-yml.js`, and run `serverless deploy`.
         ```
         $ node update-serverless-yml.js
         $ serverless deploy
