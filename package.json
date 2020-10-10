@@ -10,7 +10,7 @@
     "yaml": "^1.10.0"
   },
   "scripts": {
-    "predeploy": "node generate-serverless-yml.js",
+    "predeploy": "node update-serverless-yml.js",
     "deploy": "serverless deploy"
   }
 }
