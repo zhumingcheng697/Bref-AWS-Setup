@@ -24,10 +24,26 @@
     $ composer require bref/bref
     ```
 
-5. Initiate a new Bref project, if you haven’t already.
-    ```
-    $ vendor/bin/bref init
-    ```
+5. You are all set!
+    - To start fresh, initiate a new Bref project.
+        ```
+        $ vendor/bin/bref init
+        ```
+   
+    - To quickly deploy the PHP scripts you already have, move them to [`/php-api`](/php-api) and [`/php-func`](/php-func), run the script `update-serverless-yml.js`, and run `serverless deploy`.
+        ```
+        $ node update-serverless-yml.js
+        $ serverless deploy
+        ```
+        or
+        ```
+        $ npm run predeploy
+        $ serverless deploy
+        ```
+        or
+        ```
+        $ npm run deploy
+        ```
 
 ## Commands
 
