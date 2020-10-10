@@ -1,5 +1,22 @@
 const fs = require("fs");
 const YAML = require("yaml");
+const readline = require("readline");
+
+/**
+ * Keeps track of the current state of the program.
+ *
+ * "": start;
+ * "sn": setting name;
+ * "cn": confirming name;
+ * "sr": setting region;
+ * "cr": confirming region;
+ * "si": saving "serverless.yml";
+ * "ss": "serverless.yml" save succeeded;
+ * "sf": "serverless.yml" save failed;
+ *
+ * @type {string}
+ */
+let runMode = "";
 
 /**
  * Makes the console logs colorful.
@@ -68,9 +85,24 @@ const defaultServerlessYml = {
     }
 };
 
+/**
+ * Reads the keyboard input from the console.
+ *
+ * @link http://logan.tw/posts/2015/12/12/read-lines-from-stdin-in-nodejs/
+ */
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false
+});
 
-// const apiFiles = findFiles("php-api", "php");
-// const funcFiles = findFiles("php-func", "php");
+function setNamePrompt() {
+    console.log(`${logStyle.fg.white}How would you like to name this application? Press enter to name it ${logStyle.reset}"app"${logStyle.fg.white} by default.${logStyle.reset}`);
+}
+
+function setRegionPrompt() {
+    console.log(`${logStyle.fg.white}Which AWS region would you like to use? Press enter to set it to ${logStyle.reset}"us-east-1"${logStyle.fg.white} by default.${logStyle.reset}`);
+}
 
 /**
  * Finds files in a given path with a given extension
@@ -114,7 +146,7 @@ function getServerlessYml(handler = () => {}) {
             try {
                 const parsed = YAML.parse(file);
                 parsed["functions"] = {};
-                console.log(`${logStyle.fg.green}"serverless.yml" load succeeded${logStyle.reset}`);
+                console.log(`${logStyle.fg.green}"serverless.yml" load succeeded.${logStyle.reset}`);
                 handler(Object.assign({}, defaultServerlessYml, parsed));
             } catch (e) {
                 console.warn(`${logStyle.fg.yellow}"serverless.yml" parse failed. Using default values instead.${logStyle.reset}`);
@@ -156,7 +188,18 @@ function setFunctions(yml) {
         };
     }
 
-    console.log(`${logStyle.fg.green}"functions" field updated${logStyle.reset}`);
+    console.log(`${logStyle.fg.green}"functions" field updated.${logStyle.reset}`);
+
+    if (!yml["service"]) {
+        runMode = "sn";
+        setNamePrompt();
+    } else if (!yml["provider"]["region"]) {
+        runMode = "sr";
+        setRegionPrompt();
+    } else {
+        runMode = "si";
+        saveServerlessYml(yml);
+    }
 }
 
 /**
@@ -166,24 +209,96 @@ function setFunctions(yml) {
  * @param handler {function} Runs after load and parse
  * @return {void}
  */
-function saveServerlessYml(yml, handler = () => {}) {
+function saveServerlessYml(yml, handler = () => {
+    process.exit(0);
+}) {
     try {
         const stringified = YAML.stringify(yml, {indent: 4, simpleKeys: true});
 
         fs.writeFile("serverless.yml", stringified, (err) => {
             if (err) {
                 console.error(`${logStyle.fg.red}"serverless.yml" write failed:\n${err}${logStyle.reset}`);
+                runMode = "sf";
+                process.exit(1);
             } else {
-                console.log(`${logStyle.fg.green}"serverless.yml" save succeeded${logStyle.reset}`);
+                console.log(`${logStyle.fg.green}"serverless.yml" save succeeded.${logStyle.reset}`);
+                runMode = "ss";
                 handler();
             }
         });
     } catch (e) {
         console.error(`${logStyle.fg.red}"serverless.yml" stringify failed:\n${e}${logStyle.reset}`);
+        runMode = "sf";
+        process.exit(1);
     }
 }
 
-getServerlessYml((yml) => {
-    setFunctions(yml);
-    saveServerlessYml(yml);
-});
+/**
+ * Self-invoking main function.
+ *
+ * @return {void}
+ */
+(function main() {
+    let yml;
+    let tempName;
+    let tempRegion;
+
+    getServerlessYml((getYml) => {
+        setFunctions(getYml);
+        yml = getYml;
+    });
+
+    rl.on("line", (line) => {
+        if (!runMode || !yml) {
+            return;
+        }
+
+        if (runMode === "sn") {
+            if (line) {
+                tempName = line.replace(/\s/g, "-");
+            } else {
+                tempName = "app";
+            }
+
+            runMode = "cn";
+            console.log(`${logStyle.fg.white}Application will be named to ${logStyle.reset}"${tempName}"${logStyle.fg.white}. Continue? ${logStyle.reset}(y/n)`);
+        } else if (runMode === "cn") {
+            if (line.toUpperCase() === "Y") {
+                yml["service"] = tempName;
+
+                if (!yml["provider"]["region"]) {
+                    runMode = "sr";
+                    setRegionPrompt();
+                } else {
+                    runMode = "si";
+                    saveServerlessYml(yml);
+                }
+            } else if (line.toUpperCase() === "N") {
+                runMode = "sn";
+                setNamePrompt();
+            } else {
+                console.error(`${logStyle.fg.red}Please type in a valid keyword. (y/n)${logStyle.reset}`)
+            }
+        } else if (runMode === "sr") {
+            if (line) {
+                tempRegion = line.replace(/\s/g, "-");
+            } else {
+                tempRegion = "us-east-1";
+            }
+
+            runMode = "cr";
+            console.log(`${logStyle.fg.white}Application region will be set to ${logStyle.reset}"${tempRegion}"${logStyle.fg.white}. Continue? ${logStyle.reset}(y/n)`);
+        } else if (runMode === "cr") {
+            if (line.toUpperCase() === "Y") {
+                yml["provider"]["region"] = tempRegion;
+                runMode = "si";
+                saveServerlessYml(yml)
+            } else if (line.toUpperCase() === "N") {
+                runMode = "sr";
+                setRegionPrompt();
+            } else {
+                console.error(`${logStyle.fg.red}Please type in a valid keyword. (y/n)${logStyle.reset}`)
+            }
+        }
+    });
+})();
