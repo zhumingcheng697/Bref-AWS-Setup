@@ -105,7 +105,7 @@ function setRegionPrompt() {
 }
 
 /**
- * Finds files in a given path with a given extension
+ * Finds files in a given path with a given extension.
  *
  * @param path {string} Path of the files to find
  * @param extension {string} Extension of the files to find
@@ -132,7 +132,7 @@ function findFiles(path, extension = "") {
 }
 
 /**
- * Loads and parses "serverless.yml"
+ * Loads and parses "serverless.yml".
  *
  * @param handler {function} Runs after load and parse
  * @return {void}
@@ -157,17 +157,64 @@ function getServerlessYml(handler = () => {}) {
 }
 
 /**
- * Sets "serverless.yml" with the correct function data
+ * Sets "serverless.yml" with the correct function data.
  *
  * @param yml {Object} Parsed "serverless.yml" object
  * @return {void}
  */
 function setFunctions(yml) {
-    for (const api of findFiles("php-api", "php")) {
+    const apiFiles = findFiles("php-api", "php");
+    const funcFiles = findFiles("php-func", "php");
+
+    let converted = 0;
+    const allFileAmt = apiFiles.length + funcFiles.length;
+
+    /**
+     * Updates the path to autoloader in file at filePath.
+     *
+     * @param filePath {string} Path to the file to update
+     */
+    function updatePathToAutoload(filePath) {
+        fs.readFile(filePath, "utf8", (err, file) => {
+            if (err) {
+                console.error(`${logStyle.fg.red}"${filePath}" load failed:\n${err}${logStyle.reset}`);
+                converted += 1;
+            } else {
+                file = file.replace(/('[^']*vendor\/autoload.php')|("[^"]*vendor\/autoload.php")/g, `'../../vendor/autoload.php'`);
+                fs.writeFile(filePath, file, (e) => {
+                    if (e) {
+                        console.error(`${logStyle.fg.red}"${filePath}" save failed:\n${e}${logStyle.reset}`);
+                    }
+
+                    converted += 1;
+
+                    if (converted === allFileAmt) {
+                        setTimeout(() => {
+                            console.log(`${logStyle.fg.green}Path to "vendor/autoload.php" updated.${logStyle.reset}`);
+
+                            if (!yml["service"]) {
+                                runMode = "sn";
+                                setNamePrompt();
+                            } else if (!yml["provider"]["region"]) {
+                                runMode = "sr";
+                                setRegionPrompt();
+                            } else {
+                                runMode = "si";
+                                saveServerlessYml(yml);
+                            }
+                        }, 50);
+                    }
+                });
+            }
+        });
+    }
+
+    for (const api of apiFiles) {
         const encodedName = api[0].replace(/\s/g, "-");
+        const path = `php-api/${api[0]}.php`;
 
         yml["functions"][encodedName] = {
-            handler: `php-api/${api[0]}.php`,
+            handler: path,
             description: "",
             timeout: 28,
             layers: ["${bref:layer.php-74-fpm}"],
@@ -176,34 +223,28 @@ function setFunctions(yml) {
                 {http: `ANY /${encodedName}/{proxy+}`}
             ]
         };
+
+        updatePathToAutoload(path);
     }
 
-    for (const func of findFiles("php-func", "php")) {
+    for (const func of funcFiles) {
         const encodedName = func[0].replace(/\s/g, "-");
+        const path = `php-func/${func[0]}.php`;
 
         yml["functions"][encodedName] = {
-            handler: `php-func/${func[0]}.php`,
+            handler: path,
             description: "",
             layers: ["${bref:layer.php-74}"]
         };
+
+        updatePathToAutoload(path);
     }
 
     console.log(`${logStyle.fg.green}"functions" field updated.${logStyle.reset}`);
-
-    if (!yml["service"]) {
-        runMode = "sn";
-        setNamePrompt();
-    } else if (!yml["provider"]["region"]) {
-        runMode = "sr";
-        setRegionPrompt();
-    } else {
-        runMode = "si";
-        saveServerlessYml(yml);
-    }
 }
 
 /**
- * Writes data to "serverless.yml"
+ * Writes data to "serverless.yml".
  *
  * @param yml {Object} Parsed "serverless.yml" object
  * @param handler {function} Runs after load and parse
@@ -277,7 +318,7 @@ function saveServerlessYml(yml, handler = () => {
                 runMode = "sn";
                 setNamePrompt();
             } else {
-                console.error(`${logStyle.fg.red}Please type in a valid keyword. (y/n)${logStyle.reset}`)
+                console.error(`${logStyle.fg.red}Please type in a valid keyword. (y/n)${logStyle.reset}`);
             }
         } else if (runMode === "sr") {
             if (line) {
@@ -292,12 +333,12 @@ function saveServerlessYml(yml, handler = () => {
             if (line.toUpperCase() === "Y") {
                 yml["provider"]["region"] = tempRegion;
                 runMode = "si";
-                saveServerlessYml(yml)
+                saveServerlessYml(yml);
             } else if (line.toUpperCase() === "N") {
                 runMode = "sr";
                 setRegionPrompt();
             } else {
-                console.error(`${logStyle.fg.red}Please type in a valid keyword. (y/n)${logStyle.reset}`)
+                console.error(`${logStyle.fg.red}Please type in a valid keyword. (y/n)${logStyle.reset}`);
             }
         }
     });
