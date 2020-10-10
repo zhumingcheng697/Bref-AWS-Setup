@@ -1,0 +1,7 @@
+{
+  "name": "bref-aws-setup",
+  "version": "1.0.0",
+  "dependencies": {
+    "yaml": "^1.10.0"
+  }
+}

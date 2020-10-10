@@ -92,9 +92,9 @@ functions:
 # Exclude files from deployment
 package:
     exclude:
+        - '.idea/**'
         - 'node_modules/**'
         - 'tests/**'
         - '*.md'
         - '*.js'
         - '**/.DS_Store'
-        - '.idea'
