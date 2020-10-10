@@ -1,22 +1,5 @@
 const fs = require("fs");
-
-const apiNames = findFiles("php-api", "php");
-const funcNames = findFiles("php-func", "php");
-
-/**
- * Finds files in a given path with a given extension
- *
- * @param path {string} Path of the files to find
- * @param extension {string} Extension of the files to find
- * @return {[string]} Names of the found files
- */
-function findFiles(path, extension = "") {
-    return fs.readdirSync(path).map((fileName) => {
-        const regex = new RegExp(`^(.+)\\.${extension || "[^\\.]+"}$`, "i");
-        const match = fileName.match(regex);
-        return match ? match[1] ?? "" : "";
-    }).filter((name) => !!name);
-}
+const YAML = require("yaml");
 
 /**
  * Makes the console logs colorful.
@@ -55,6 +38,29 @@ const logStyle = {
         crimson: "\x1b[48m"
     }
 };
+
+const apiNames = findFiles("php-api", "php");
+const funcNames = findFiles("php-func", "php");
+
+/**
+ * Finds files in a given path with a given extension
+ *
+ * @param path {string} Path of the files to find
+ * @param extension {string} Extension of the files to find
+ * @return {[string]} Names of the found files
+ */
+function findFiles(path, extension = "") {
+    try {
+        return fs.readdirSync(path).map((fileName) => {
+            const regex = new RegExp(`^(.+)\\.${extension || "[^\\.]+"}$`, "i");
+            const match = fileName.match(regex);
+            return match ? match[1] ?? "" : "";
+        }).filter((name) => !!name);
+    } catch (e) {
+        console.error(`${logStyle.fg.red}Unable to read from "${path}": ${e}${logStyle.reset}`);
+        return [];
+    }
+}
 
 console.log(`${logStyle.fg.green}${apiNames}${logStyle.reset}`);
 console.log(`${logStyle.fg.green}${funcNames}${logStyle.reset}`);
