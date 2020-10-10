@@ -69,5 +69,29 @@ function findFiles(path, extension = "") {
     }
 }
 
+/**
+ * Loads and parses "serverless.yml"
+ *
+ * @param handler {function} Runs after load and parse
+ * @return {void}
+ */
+function readServerlessYml(handler = () => {}) {
+    try {
+        const file = fs.readFileSync("serverless.yml", "utf8");
+
+        try {
+            handler(Object.assign({}, YAML.parse(file)));
+        } catch (e) {
+            console.warn(`${logStyle.fg.yellow}Unable to parse "serverless.yml"${logStyle.reset}`);
+            handler(Object.assign({}, {}));
+        }
+    } catch (e) {
+        console.warn(`${logStyle.fg.yellow}Unable to read "serverless.yml"${logStyle.reset}`);
+        handler(Object.assign({}, {}));
+    }
+}
+
+readServerlessYml(console.log);
+
 console.table(apiFiles);
 console.table(funcFiles);
