@@ -40,10 +40,11 @@ const logStyle = {
 };
 
 const defaultServerlessYml = {
-    // service: "app",
+    service: "",
     provider: {
         name: "aws",
         // region: "us-east-1",
+        region: "",
         runtime: "provided",
         iamRoleStatements: [
             {
@@ -68,8 +69,8 @@ const defaultServerlessYml = {
 };
 
 
-const apiFiles = findFiles("php-api", "php");
-const funcFiles = findFiles("php-func", "php");
+// const apiFiles = findFiles("php-api", "php");
+// const funcFiles = findFiles("php-func", "php");
 
 /**
  * Finds files in a given path with a given extension
@@ -110,6 +111,7 @@ function readServerlessYml(handler = () => {}) {
 
         try {
             const parsed = YAML.parse(file);
+            parsed["functions"] = {};
             console.log(`${logStyle.fg.green}"serverless.yml" load succeeded${logStyle.reset}`);
             handler(Object.assign({}, defaultServerlessYml, parsed));
         } catch (e) {
@@ -122,7 +124,39 @@ function readServerlessYml(handler = () => {}) {
     }
 }
 
-readServerlessYml(console.log);
+function setFunctions(yml) {
+    for (const api of findFiles("php-api", "php")) {
+        const encodedName = api[0].replace(/\s/g, "-");
 
-console.table(apiFiles);
-console.table(funcFiles);
+        yml["functions"][encodedName] = {
+            handler: `php-api/${api[0]}.php`,
+            description: "",
+            timeout: 28,
+            layers: ["${bref:layer.php-74-fpm}"],
+            events: [
+                {http: `ANY /${encodedName}/`},
+                {http: `ANY /${encodedName}/{proxy+}`}
+            ]
+        };
+    }
+
+    for (const func of findFiles("php-func", "php")) {
+        const encodedName = func[0].replace(/\s/g, "-");
+
+        yml["functions"][encodedName] = {
+            handler: `php-func/${func[0]}.php`,
+            description: "",
+            layers: ["${bref:layer.php-74}"]
+        };
+    }
+
+    console.log(yml);
+}
+
+readServerlessYml((yml) => {
+    console.log(yml);
+    setFunctions(yml);
+});
+
+// console.table(apiFiles);
+// console.table(funcFiles);
