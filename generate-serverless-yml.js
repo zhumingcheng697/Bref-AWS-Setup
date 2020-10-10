@@ -173,6 +173,7 @@ function setFunctions(yml) {
      * Updates the path to autoloader in file at filePath.
      *
      * @param filePath {string} Path to the file to update
+     * @return {void}
      */
     function updatePathToAutoload(filePath) {
         fs.readFile(filePath, "utf8", (err, file) => {
@@ -240,7 +241,7 @@ function setFunctions(yml) {
         updatePathToAutoload(path);
     }
 
-    console.log(`${logStyle.fg.green}"functions" field updated.${logStyle.reset}`);
+    console.log(`${logStyle.fg.green}Field "functions" updated.${logStyle.reset}`);
 }
 
 /**

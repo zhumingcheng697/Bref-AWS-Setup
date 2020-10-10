@@ -1,7 +1,16 @@
 {
   "name": "bref-aws-setup",
   "version": "1.0.0",
+  "license": "CC-BY-NC-SA-4.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhumingcheng697/Bref-AWS-Setup.git"
+  },
   "dependencies": {
     "yaml": "^1.10.0"
+  },
+  "scripts": {
+    "predeploy": "node generate-serverless-yml.js",
+    "deploy": "serverless deploy"
   }
 }
