@@ -255,6 +255,8 @@ function saveServerlessYml(yml, handler = () => {
     process.exit(0);
 }) {
     try {
+        yml["package"]["exclude"] = [...new Set([...yml["package"]["exclude"], ...defaultServerlessYml["package"]["exclude"]])];
+
         const stringified = YAML.stringify(yml, {indent: 4, simpleKeys: true});
 
         fs.writeFile("serverless.yml", stringified, (err) => {
