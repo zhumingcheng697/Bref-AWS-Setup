@@ -28,9 +28,9 @@
    
    - On a Windows machine, download and run [Composer-Setup.exe](https://getcomposer.org/Composer-Setup.exe) as detailed on the [Composer website](https://getcomposer.org/doc/00-intro.md#using-the-installer).
 
-6. Install [Bref](https://bref.sh/docs/) through Composer.
+6. Install necessary PHP modules through Composer.
     ```
-    $ composer require bref/bref
+    $ composer install
     ```
 
 7. You are all set!
@@ -54,7 +54,21 @@
         $ npm run deploy
         ```
 
-## Commands
+## NPM Scripts
+
+- Generate or update `serverless.yml` to prepare for deployment:
+    ```
+    $ npm run predeploy
+    ```
+
+- Generate or update `serverless.yml` and deploy an AWS application with all the lambdas:
+    ```
+    $ npm run deploy
+    ```
+ 
+ > _**Warning:** Only run these two scripts if all your PHP API scripts are in [`php-api/`](php-api) and all your PHP function scripts are in [`php-func/`](php-func), or the configuration for all your other PHP scripts will be discarded._
+
+## Serverless Commands
 
 - Deploy an AWS application with all the lambdas:
     ```

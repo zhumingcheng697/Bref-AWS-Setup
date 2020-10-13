@@ -77,3 +77,15 @@
 - Updated `package.json`
 
 - Updated `README.md`
+
+## Week 7
+
+### Monday: October 12, 2020 (2 hours)
+
+- Researched on backreference and lookahead in regex
+
+- Added regex check for inputting AWS regions
+
+- Improved `/vendor/autoload.php` path update
+
+- Updated `README.md`
