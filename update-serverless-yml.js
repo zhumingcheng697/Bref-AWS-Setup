@@ -123,7 +123,7 @@ function findFiles(path, extension = "") {
             if (err) {
                 console.error(`${logStyle.fg.red}Unable to read from or write to directory "${path}":\n${e}\n${err}${logStyle.reset}`);
             } else {
-                console.log(`${logStyle.fg.green}Directory "${path}" created${logStyle.reset}`);
+                console.log(`${logStyle.fg.green}Directory "${path}" created.${logStyle.reset}`);
             }
         });
 
@@ -141,16 +141,22 @@ function getServerlessYml(handler = () => {}) {
     fs.readFile("serverless.yml", "utf8", (err, file) => {
         if (err) {
             console.warn(`${logStyle.fg.yellow}"serverless.yml" load failed. Using default values instead.${logStyle.reset}`);
-            handler(Object.assign({}, defaultServerlessYml));
+            setTimeout(() => {
+                handler(Object.assign({}, defaultServerlessYml));
+            }, 50);
         } else {
             try {
                 const parsed = YAML.parse(file);
                 parsed["functions"] = {};
                 console.log(`${logStyle.fg.green}"serverless.yml" load succeeded.${logStyle.reset}`);
-                handler(Object.assign({}, defaultServerlessYml, parsed));
+                setTimeout(() => {
+                    handler(Object.assign({}, defaultServerlessYml, parsed));
+                }, 50);
             } catch (e) {
                 console.warn(`${logStyle.fg.yellow}"serverless.yml" parse failed. Using default values instead.${logStyle.reset}`);
-                handler(Object.assign({}, defaultServerlessYml));
+                setTimeout(() => {
+                    handler(Object.assign({}, defaultServerlessYml));
+                }, 50);
             }
         }
     });
@@ -181,7 +187,7 @@ function setFunctions(yml) {
                 console.error(`${logStyle.fg.red}"${filePath}" load failed:\n${err}${logStyle.reset}`);
                 converted += 1;
             } else {
-                file = file.replace(/('[^']*vendor\/autoload.php')|("[^"]*vendor\/autoload.php")/g, `'/../vendor/autoload.php'`);
+                file = file.replace(/(['"])(?:(?!\1).|\\\1)*vendor\/autoload.php\1/g, `'/../vendor/autoload.php'`);
                 fs.writeFile(filePath, file, (e) => {
                     if (e) {
                         console.error(`${logStyle.fg.red}"${filePath}" save failed:\n${e}${logStyle.reset}`);
@@ -211,7 +217,7 @@ function setFunctions(yml) {
     }
 
     for (const api of apiFiles) {
-        const encodedName = api[0].replace(/\s/g, "-");
+        const encodedName = api[0].replace(/\s+/g, "-");
         const path = `php-api/${api[0]}.php`;
 
         yml["functions"][encodedName] = {
@@ -229,7 +235,7 @@ function setFunctions(yml) {
     }
 
     for (const func of funcFiles) {
-        const encodedName = func[0].replace(/\s/g, "-");
+        const encodedName = func[0].replace(/\s+/g, "-");
         const path = `php-func/${func[0]}.php`;
 
         yml["functions"][encodedName] = {
@@ -299,7 +305,7 @@ function saveServerlessYml(yml, handler = () => {
 
         if (runMode === "sn") {
             if (line) {
-                tempName = line.replace(/\s/g, "-");
+                tempName = line.replace(/\s+/g, "-");
             } else {
                 tempName = "app";
             }
@@ -325,7 +331,14 @@ function saveServerlessYml(yml, handler = () => {
             }
         } else if (runMode === "sr") {
             if (line) {
-                tempRegion = line.replace(/\s/g, "-");
+                line = line.replace(/\s+/g, "-").toLowerCase();
+
+                if (line.match(/^[a-z]{2}(?:-gov)?-(?:central|(?:north|south)|(?:east|west)|(?:north|south)(?:east|west))-[1-9][0-9]?$/)) {
+                    tempRegion = line;
+                } else {
+                    console.error(`${logStyle.fg.red}Please type in a valid AWS region, or press enter to set it to "us-east-1" by default.${logStyle.reset}`);
+                    return;
+                }
             } else {
                 tempRegion = "us-east-1";
             }
