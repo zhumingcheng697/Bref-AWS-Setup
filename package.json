@@ -1,7 +1,13 @@
 {
   "name": "bref-aws-setup",
   "version": "1.0.0",
+  "description": "A Script that Speeds up the Process to Deploy PHP functions onto AWS Lambda",
   "license": "CC-BY-NC-SA-4.0",
+  "author": {
+    "name": "McCoy Zhu",
+    "email": "mccoy.zhu@nyu.edu",
+    "url": "https://github.com/zhumingcheng697"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/zhumingcheng697/Bref-AWS-Setup.git"
