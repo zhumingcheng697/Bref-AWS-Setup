@@ -6,35 +6,41 @@ return function ($event) {
     global $return_msg;
 
     function send_email($mailto, $subject, $body) {
-        $email_config = json_decode(file_get_contents(__DIR__ . '/../email.json'), true);
-
-        $transport = (new Swift_SmtpTransport($email_config["host"], $email_config["port"], ($email_config["encryption"] ?? null) ? $email_config["encryption"] : null))
-            ->setUsername($email_config["username"])
-            ->setPassword($email_config["password"])
-        ;
-
-        $mailer = new Swift_Mailer($transport);
-
-        $message = (new Swift_Message($subject))
-            ->setFrom([$email_config["username"] => "PHP Email Lambda Test"])
-            ->setTo([$mailto])
-            ->setBody($body)
-        ;
-
-        return $mailer->send($message);
-    }
-
-    function send_default_email($subject, $body) {
         global $return_msg;
 
-        $return_msg .= "Trying to send email to \"nyu-dining-test@outlook.com\"\n";
-
         try {
-            $result = send_email("nyu-dining-test@outlook.com", $subject, $body);
+            $email_config = json_decode(file_get_contents(__DIR__ . '/../email.json'), true);
 
-            $return_msg .= $result ? "Email sent successfully to \"nyu-dining-test@outlook.com\"\n" : "Email failed to send:\n" . $result . "\n";
+            $transport = (new Swift_SmtpTransport($email_config["host"], $email_config["port"], ($email_config["encryption"] ?? null) ? $email_config["encryption"] : null))
+                ->setUsername($email_config["username"])
+                ->setPassword($email_config["password"])
+            ;
+
+            $mailer = new Swift_Mailer($transport);
+
+            $message = (new Swift_Message($subject))
+                ->setFrom([$email_config["username"] => "PHP Email Lambda Test"])
+                ->setTo([$mailto])
+                ->setBody($body)
+            ;
+
+            if ($mailer->send($message)) {
+                $return_msg .= "Email sent successfully to \"" . $mailto . "\"\n";
+            } else {
+                $return_msg .= "Email failed to send\n";
+
+                if ($mailto != "nyu-dining-test@outlook.com") {
+                     $return_msg .= "Trying to send email to \"nyu-dining-test@outlook.com\"\n";
+                     send_email("nyu-dining-test@outlook.com", $subject, $body);
+                }
+            }
         } catch (Exception $e) {
             $return_msg .= "Email failed to send:\n" .  $e->getMessage() . "\n";
+
+            if ($mailto != "nyu-dining-test@outlook.com") {
+                 $return_msg .= "Trying to send email to \"nyu-dining-test@outlook.com\"\n";
+                 send_email("nyu-dining-test@outlook.com", $subject, $body);
+            }
         }
     }
 
@@ -46,19 +52,7 @@ return function ($event) {
         $return_msg .= "email: " . $mailto . "\nsubject: " . $subject . "\nbody: " . $body . "\n";
     }
 
-    try {
-        $result = send_email($mailto, $subject, $body);
-
-        if ($result) {
-            $return_msg .= "Email sent successfully to \"" . $mailto . "\"\n";
-        } else {
-            $return_msg .= "Email failed to send:\n" . $result . "\n";
-            send_default_email($subject, $body);
-        }
-    } catch (Exception $e) {
-        $return_msg .= "Email failed to send:\n" .  $e->getMessage() . "\n";
-        send_default_email($subject, $body);
-    }
+    send_email($mailto, $subject, $body);
 
     return $return_msg;
 };
