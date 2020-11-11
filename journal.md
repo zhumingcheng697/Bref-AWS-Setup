@@ -89,3 +89,15 @@
 - Improved `/vendor/autoload.php` path update
 
 - Updated `README.md`
+
+## Week 11
+
+### Tuesday: November 10, 2020 (3 hours)
+
+- Removed SMTP credentials from source code and loading it dynamically from `email.json` now
+
+- Improved code quality for email function and API
+
+- Updated `README.md`
+
+- Updated `package.json`
