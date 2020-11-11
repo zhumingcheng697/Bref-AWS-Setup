@@ -42,12 +42,11 @@
     ```
    {
      "host": <your_host>,
-     "port": <your_host>,
-     "encryption": <your_encryption>,
+     "port": <your_port>,
+     "encryption": <your_encryption_method>,
      "username": <your_username>,
      "password": <your_password>
    }
-
    ```
    > Property `encryption` accepts `"ssl"` and `"tls"`, and defaults to `null` if unset.
 
