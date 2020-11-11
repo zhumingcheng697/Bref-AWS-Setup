@@ -6,15 +6,17 @@ return function ($event) {
     global $return_msg;
 
     function send_email($mailto, $subject, $body) {
-        $transport = (new Swift_SmtpTransport("smtp-mail.outlook.com", 587, "tls"))
-            ->setUsername("nyu-dining-test@outlook.com")
-            ->setPassword("Dining*2020")
+        $email_config = json_decode(file_get_contents(__DIR__ . '/../email.json'), true);
+
+        $transport = (new Swift_SmtpTransport($email_config["host"], $email_config["port"], ($email_config["encryption"] ?? null) ? $email_config["encryption"] : null))
+            ->setUsername($email_config["username"])
+            ->setPassword($email_config["password"])
         ;
 
         $mailer = new Swift_Mailer($transport);
 
         $message = (new Swift_Message($subject))
-            ->setFrom(["nyu-dining-test@outlook.com" => "PHP Email Lambda Test"])
+            ->setFrom([$email_config["username"] => "PHP Email Lambda Test"])
             ->setTo([$mailto])
             ->setBody($body)
         ;
@@ -30,9 +32,9 @@ return function ($event) {
         try {
             $result = send_email("nyu-dining-test@outlook.com", $subject, $body);
 
-            $return_msg .= $result ? "Email sent successfully to \"nyu-dining-test@outlook.com\"\n" : "Email failed to send: " . $result . "\n";
+            $return_msg .= $result ? "Email sent successfully to \"nyu-dining-test@outlook.com\"\n" : "Email failed to send:\n" . $result . "\n";
         } catch (Exception $e) {
-            $return_msg .= "Email failed to send: " .  $e->getMessage() . "\n";
+            $return_msg .= "Email failed to send:\n" .  $e->getMessage() . "\n";
         }
     }
 
@@ -50,11 +52,11 @@ return function ($event) {
         if ($result) {
             $return_msg .= "Email sent successfully to \"" . $mailto . "\"\n";
         } else {
-            $return_msg .= "Email failed to send: " . $result . "\n";
+            $return_msg .= "Email failed to send:\n" . $result . "\n";
             send_default_email($subject, $body);
         }
     } catch (Exception $e) {
-        $return_msg .= "Email failed to send: " .  $e->getMessage() . "\n";
+        $return_msg .= "Email failed to send:\n" .  $e->getMessage() . "\n";
         send_default_email($subject, $body);
     }
 
