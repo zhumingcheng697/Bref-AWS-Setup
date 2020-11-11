@@ -1,3 +1,7 @@
+# Bref-AWS-Setup
+
+**A Script that Speeds up the Process to Deploy PHP functions onto AWS Lambda.**
+
 ## How to Set Up
 
 1. Clone this repo.
@@ -9,6 +13,7 @@
     ```
     $ npm install -g serverless
     ```
+  
 3. Install other necessary node modules.
     ```
     $ npm install
@@ -32,8 +37,21 @@
     ```
     $ composer install
     ```
+   
+7. If you want to test out the email sending function and API, configure `email.json`.
+    ```
+   {
+     "host": <your_host>,
+     "port": <your_host>,
+     "encryption": <your_encryption>,
+     "username": <your_username>,
+     "password": <your_password>
+   }
 
-7. You are all set!
+   ```
+   > Property `encryption` accepts `"ssl"` and `"tls"`, and defaults to `null` if unset.
+
+8. You are all set!
     - To start fresh, initiate a new Bref project.
         ```
         $ vendor/bin/bref init
