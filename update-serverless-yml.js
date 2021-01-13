@@ -226,8 +226,8 @@ function setFunctions(yml) {
             timeout: 28,
             layers: ["${bref:layer.php-74-fpm}"],
             events: [
-                {http: `ANY /${encodedName}/`},
-                {http: `ANY /${encodedName}/{proxy+}`}
+                { http: `ANY /${encodedName}/` },
+                { http: `ANY /${encodedName}/{proxy+}` }
             ]
         };
 
@@ -263,7 +263,7 @@ function saveServerlessYml(yml, handler = () => {
     try {
         yml["package"]["exclude"] = [...new Set([...yml["package"]["exclude"], ...defaultServerlessYml["package"]["exclude"]])];
 
-        const stringified = YAML.stringify(yml, {indent: 4, simpleKeys: true});
+        const stringified = YAML.stringify(yml, { indent: 4, simpleKeys: true });
 
         fs.writeFile("serverless.yml", stringified, (err) => {
             if (err) {
