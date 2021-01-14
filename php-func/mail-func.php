@@ -44,9 +44,9 @@ return function ($event) {
         }
     }
 
-    $mailto = $event["to"] ?? $event["mailto"] ?? "nyu-dining-test@outlook.com";
-    $subject = $event["subject"] ?? "PHP Email Lambda Test (" . date(DATE_RFC2822) . ")";
-    $body = $event["body"] ?? $event["msg"] ?? $event["message"] ?? "This is an automatic email sent using PHP Lambda.";
+    $mailto = ($event["to"] ?? null) ? $event["to"] : (($event["mailto"] ?? null) ? $event["mailto"] : "nyu-dining-test@outlook.com");
+    $subject = ($event["subject"] ?? null) ? $event["subject"] : "PHP Email Lambda Test (" . date(DATE_RFC2822) . ")";
+    $body = ($event["body"] ?? null) ? $event["body"] : (($event["msg"] ?? null) ? $event["msg"] : (($event["message"] ?? null) ? $event["message"] : "This is an automatic email sent using PHP Lambda."));
 
     if ($event["dev"] ?? false) {
         $return_msg .= "email: " . $mailto . "\nsubject: " . $subject . "\nbody: " . $body . "\n";
